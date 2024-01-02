@@ -4,7 +4,44 @@ import numpy as np
 import cv2
 import torch.nn as nn
 import torchvision.transforms.functional as TF
+from torchvision import transforms
+from copy import deepcopy
 
+class ScanpathTransform:
+    def __init__(self,
+                 img_size = (320, 512),
+                 noise = 0.6,
+                 drop = 0.4,
+                 reversal = 0.5,
+                 rotation = 0.5,
+                 ):
+        
+        self.transform = transforms.Compose([
+            Resize(img_size),
+            RandomHorizontalFlip(),
+            transforms.RandomApply([ScanpathReversal()], p=reversal),
+            transforms.RandomApply([Rotation(-30, 30)], p=rotation),
+            transforms.RandomApply([FixNoiseAddition()], p=noise),
+            transforms.RandomApply([FixDropout()], p=drop),
+            ToTensor(),
+            Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        ])
+        self.transform_prime = transforms.Compose([
+            Resize(img_size),
+            transforms.RandomApply([FixNoiseAddition()], p=noise),
+            transforms.RandomApply([FixDropout()], p=drop),
+            RandomHorizontalFlip(),
+            transforms.RandomApply([ScanpathReversal()], p=reversal),
+            transforms.RandomApply([Rotation(-30, 30)], p=rotation),
+            ToTensor(),
+            Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        ])
+        
+    def __call__(self, x):
+        y1 = self.transform(deepcopy(x))
+        y2 = self.transform(deepcopy(x))
+        del x
+        return y1, y2
 class FixNoiseAddition(nn.Module):
     """
     Add random noise to each unnormalized fixation coordinate

@@ -69,7 +69,7 @@ def main_worker(gpu, args):
     
     # Dataset
     anno, _ = read_dataset(args.data_dir, args.datasets, val_ratio=0.0)
-    dataset = FixationDataset(anno, ScanpathTransform())
+    dataset = FixationDataset(anno, ScanpathTransform(**args.transform))
     sampler = torch.utils.data.distributed.DistributedSampler(dataset)
     assert args.batch_size % args.world_size == 0
     per_device_batch_size = args.batch_size // args.world_size

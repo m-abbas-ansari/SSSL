@@ -17,3 +17,10 @@ class args:
     checkpoint_dir=Path('./checkpoint/')
     data_dir = "../input/fixation-datasets/FIXATION_DATASET"
     datasets = ['COCOSearch18']
+    transform = dict(
+        img_size = (img_height, img_width),
+        noise = 0.6,
+        drop = 0.4,
+        reversal = 0.5,
+        rotation = 0.5,
+    )
