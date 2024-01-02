@@ -1,7 +1,7 @@
 import torch
 import random
 import numpy as np
-from configs import args
+from configs import args as Arg
 import json
 import random
 import sys
@@ -13,6 +13,7 @@ from models.ffn import FFNGenerator
 from models.ssl import BarlowTwins, LARS, adjust_learning_rate
 
 def main():
+    args = Arg()
     args.ngpus_per_node = torch.cuda.device_count()
     # single-node distributed training
     args.rank = 0
@@ -50,7 +51,7 @@ def main_worker(gpu, args):
         else:
             param_weights.append(param)
     parameters = [{'params': param_weights}, {'params': param_biases}]
-    model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[gpu])
+    model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[gpu], find_unused_parameters=True)
     
     # Optimizer
     optimizer = LARS(parameters, lr=0, weight_decay=args.weight_decay,
@@ -81,7 +82,7 @@ def main_worker(gpu, args):
     scaler = torch.cuda.amp.GradScaler()
     for epoch in range(start_epoch, args.epochs):
         sampler.set_epoch(epoch)
-        for step, ((y1, y2), _) in enumerate(loader, start=epoch * len(loader)):
+        for step, (y1, y2) in enumerate(loader, start=epoch * len(loader)):
             y1 = [y.cuda(gpu, non_blocking=True) for y in y1]
             y2 = [y.cuda(gpu, non_blocking=True) for y in y2]
             adjust_learning_rate(args, optimizer, loader, step)

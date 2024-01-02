@@ -42,6 +42,7 @@ class ScanpathTransform:
         y2 = self.transform(deepcopy(x))
         del x
         return y1, y2
+    
 class FixNoiseAddition(nn.Module):
     """
     Add random noise to each unnormalized fixation coordinate
