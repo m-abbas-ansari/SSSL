@@ -154,7 +154,7 @@ class ASDDataset(data.Dataset):
         self.img_size = []
 
         for img_id in data.keys():
-            if not img_id in valid_id:
+            if valid_id is not None and not img_id in valid_id:
                 continue
             for group_label, group in enumerate(['ctrl','asd']):
                 self.fixation.extend(data[img_id][group]['fixation'])
