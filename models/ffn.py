@@ -185,3 +185,4 @@ class FFNGenerator(nn.Module):
         out = self.avgpool(x)
         out = torch.flatten(out, 1)
         return out
+    

@@ -42,6 +42,21 @@ class ScanpathTransform:
         y2 = self.transform(deepcopy(x))
         del x
         return y1, y2
+
+class ResizeNormalize:
+    def __init__(self,
+                 img_size = (320, 512)
+                 ):
+        
+        self.transform = transforms.Compose([
+            Resize(img_size),
+            ToTensor(),
+            Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        ])
+        
+    def __call__(self, x):
+        img, fix, dur = self.transform(deepcopy(x))
+        return img,fix,dur
     
 class FixNoiseAddition(nn.Module):
     """

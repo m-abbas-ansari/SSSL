@@ -99,3 +99,5 @@ class LARS(optim.Optimizer):
                 mu.mul_(g['momentum']).add_(dp)
 
                 p.add_(mu, alpha=-g['lr'])
+                
+                
