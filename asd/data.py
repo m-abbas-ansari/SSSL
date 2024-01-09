@@ -176,7 +176,7 @@ class ASDDataset(data.Dataset):
         return len(self.fixation)
     
     def collate_function(self, batch):
-        img_b, fix_b, dur_b = zip(*batch)
+        img_b, label_b, fix_b, dur_b = zip(*batch)
         fix_b, dur_b = list(fix_b), list(dur_b)
         fix_lens = [len(fix) for fix in fix_b]
         max_fix_len = max(fix_lens)
@@ -185,4 +185,4 @@ class ASDDataset(data.Dataset):
             fix_b[i] = pad(fix, (0,0, 0, max_fix_len - len(fix)), "constant", 1e7)
             dur_b[i] = pad(dur_b[i], (0,max_fix_len - len(dur_b[i])), "constant", 1e7)
 
-        return (torch.stack(img_b), torch.stack(fix_b), torch.stack(dur_b))
+        return torch.stack(img_b), torch.stack(label_b), torch.stack(fix_b), torch.stack(dur_b)
