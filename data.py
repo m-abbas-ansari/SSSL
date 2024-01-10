@@ -55,7 +55,8 @@ def read_dataset(anno_dir, datasets, val_ratio = 0.2):
                 if 'durations' in anno[im]:
                     ret_anno[i]['duration'].extend(anno[im]['durations'])
                 else:
-                    ret_anno[i]['duration'].extend([[0]]*num)
+                    dur = [[0]*len(fix) for fix in anno[im]['fixations']]
+                    ret_anno[i]['duration'].extend(dur)
                     
                 ret_anno[i]['img_id'].extend([f"{anno_dir}/STIMULI/{data}/{im}.jpg"]*num)
                 if 'dva' in anno[im]:
