@@ -40,7 +40,7 @@ def main_worker(gpu, args):
     torch.backends.cudnn.benchmark = True
     
     # Model
-    backbone = FFNGenerator(args.ffn_size, args.ffn_size)
+    backbone = FFNGenerator((args.img_height, args.img_width), args.ffn_size)
     model = BarlowTwins(args, backbone).cuda(gpu)
     model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
     param_weights = []
