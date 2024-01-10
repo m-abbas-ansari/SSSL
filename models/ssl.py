@@ -16,7 +16,7 @@ class BarlowTwins(nn.Module):
         self.backbone = backbone
 
         # projector
-        sizes = [args.ffn_size] + args.projector
+        sizes = [args.hidden_size] + args.projector
         layers = []
         for i in range(len(sizes) - 2):
             layers.append(nn.Linear(sizes[i], sizes[i + 1], bias=False))
