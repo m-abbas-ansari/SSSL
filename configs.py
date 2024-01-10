@@ -2,21 +2,21 @@ from pathlib import Path
 
 class args:
     seed = 41
-    epochs=10
-    batch_size= 48
-    img_height = 320
-    img_width = 512
-    ffn_size = 128
+    epochs=1000
+    batch_size= 32
+    img_height = 224
+    img_width = 224
+    ffn_size = 512
     workers= 1
     learning_rate_weights=0.2
     learning_rate_biases=0.0048
     weight_decay=1e-6
     lambd=0.0051
-    projector=[ffn_size*4]*3
+    projector=[ffn_size*16]*3
     print_freq=100
     checkpoint_dir=Path('../checkpoint/')
     data_dir = "../../input/fixation-datasets/FIXATION_DATASET"
-    datasets = ['COCOSearch18']
+    datasets = ['SALICON', 'EMOD', 'FIWI', 'MITLowRes', 'OSIE', 'SIENA12', 'TORONTO', 'VIU']
     transform = dict(
         img_size = (img_height, img_width),
         noise = 0.6,

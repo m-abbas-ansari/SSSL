@@ -296,3 +296,26 @@ class Normalize(nn.Module):
         assert fix.max() <= 1.0, "Fixaitons must lie within image"
         
         return (new_img, fix, dur)
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

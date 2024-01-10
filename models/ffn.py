@@ -131,8 +131,8 @@ class FeatureFovealNet(nn.Module):
 
 class FFNGenerator(nn.Module):
     def __init__(self,
+                 img_size,
                  foveal_feat_size=256,
-                 hidden_size=1024,
                  is_cumulative=True, 
                  ):
         super(FFNGenerator, self).__init__()
@@ -140,7 +140,8 @@ class FFNGenerator(nn.Module):
         self.FFN = FeatureFovealNet(foveal_feat_size)
 #         hidden_size = foveal_feat_size
         self.resnet = torch.hub.load('facebookresearch/barlowtwins:main', 'resnet50')
-
+        hidden_size = foveal_feat_size * 2
+        H, W = img_size
         self.layer2 = nn.Sequential(
             nn.Conv2d(foveal_feat_size,
                       hidden_size,
@@ -148,23 +149,25 @@ class FFNGenerator(nn.Module):
                       stride=1,
                       padding=1,
                       bias=False), 
-            nn.LayerNorm([hidden_size, 80, 128]), nn.ELU(),
+            nn.LayerNorm([hidden_size, H//4, W//4]), nn.ELU(),
             nn.Conv2d(hidden_size, hidden_size, 1, stride=2, bias=False),
-            nn.LayerNorm([hidden_size, 40, 64]))
-    
+            nn.LayerNorm([hidden_size, H//8, W//8]))
+
+        hidden_size *= 2
         self.layer3 = nn.Sequential(
-            nn.Conv2d(hidden_size,
+            nn.Conv2d(foveal_feat_size*2,
                           hidden_size,
                           3,
                           stride=2,
                           padding=1,
                           bias=False), 
-            nn.LayerNorm([hidden_size, 20, 32]), nn.ELU(),
+            nn.LayerNorm([hidden_size, H//16, W//16]), nn.ELU(),
             nn.Conv2d(hidden_size, hidden_size, 1, stride=2, bias=False),
-            nn.LayerNorm([hidden_size, 10, 16]))
+            nn.LayerNorm([hidden_size, H//32, W//32]))
         
         self.avgpool = nn.AdaptiveAvgPool2d((1,1))
         
+        5
         
     def forward(self, view):
         im_tensor, fixations, _ = view
